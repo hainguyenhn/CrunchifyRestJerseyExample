@@ -5,10 +5,11 @@ import java.security.*;
 import java.math.*;
 
 public class hash {
-
 	public static String get_string(int length){
 		/*
 		 * This method generates string of zero with certain length
+		 * @in: length of zero string
+		 * @out: string of zero
 		 */
 		String result = "";
 		for (int i = 0; i < length; i ++){
@@ -18,6 +19,11 @@ public class hash {
 	}
 
 	public static boolean verify_hash(int length, String target){
+		/*
+		 * This method verifies that hashed target string will have number of leading zeroes
+		 * @in: length of leading zeroes
+		 * @in target: string target to be hashed and verified
+		 */
 		boolean result = false;
 		String _result = _hash(target);
 		if (_result.toString().substring(0, length).equals(get_string(length))){
@@ -28,6 +34,11 @@ public class hash {
 
 
 	public static String _hash(String target){
+		/*
+		 * This method hashes a string using md5
+		 * @in: string to be hashed
+		 * @out: hashed string
+		 */
 		String result = "";
 		MessageDigest  m = null;
 		try {
@@ -45,8 +56,14 @@ public class hash {
 		result = sb.toString();
 		return result;
 	}
-	
+
 	public static int work(int length, String base){
+		/*
+		 * This method generates string of zero with certain length
+		 * @in length: length of leading zero
+		 * @in string: base string
+		 * @out: i which is number to be combined with base to get number of leading zero
+		 */
 		String s = base;
 		int num_i = length;
 		String _hash = "";
@@ -64,10 +81,7 @@ public class hash {
 
 	public static void main(String[] args) {
 		String s="This is a test";
-
 		int result = work(3, s);
 		System.out.println(verify_hash(3, s+result));
-
 	}
-
 }
