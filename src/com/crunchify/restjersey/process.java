@@ -49,6 +49,14 @@ public class process {
 		return Response.status(200).entity(obj_new.toString()).build();
 	}
 	
-	
-
+	@POST
+	@Path("/hash")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response _hash(String msg) {
+		JSONObject obj = new JSONObject(msg);
+		int from = obj.getInt("from");
+		int to = obj.getInt("to");
+		int num_i = obj.getInt("num_i");
+		return Response.status(200).entity(obj.toString()).build();
+	}
 }
