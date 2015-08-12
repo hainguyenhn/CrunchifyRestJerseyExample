@@ -57,31 +57,41 @@ public class hash {
 		return result;
 	}
 
-	public static int work(int length, String base){
+	public static int work(int length, String base, int from, int to){
 		/*
 		 * This method generates string of zero with certain length
 		 * @in length: length of leading zero
 		 * @in string: base string
-		 * @out: i which is number to be combined with base to get number of leading zero
+		 * @in from: starting i 
+		 * @out to: ending i
+		 * @out:  i if found is number to be combined with base to get number of leading zero
+		 * 	   : -1 if not found
 		 */
 		String s = base;
 		int num_i = length;
 		String _hash = "";
 		boolean found = false;
-		int j = -1;
-		while(!found){
-			j++;
+		int j = from;
+		while(!found && j <= to){
 			String a = s + j;
 			if(verify_hash(num_i, a)){
 				found = true;
+				System.out.println("found");
 			}
-		}	
+			else{
+				j++;
+			}
+		}
+		if(!found){
+			j = -1;
+		}
 		return j;
 	}
 
 	public static void main(String[] args) {
 		String s="This is a test";
-		int result = work(3, s);
-		System.out.println(verify_hash(3, s+result));
+		int result = work(3, s, 0, 9999);
+		System.out.print(result);
+		System.out.println(verify_hash(2, s+result));
 	}
 }

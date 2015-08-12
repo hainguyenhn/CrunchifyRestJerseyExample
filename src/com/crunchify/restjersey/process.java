@@ -57,6 +57,12 @@ public class process {
 		int from = obj.getInt("from");
 		int to = obj.getInt("to");
 		int num_i = obj.getInt("num_i");
-		return Response.status(200).entity(obj.toString()).build();
+		String base = obj.getString("base_string");
+	
+		int result = hash.work(num_i, base, from, to);
+		JSONObject _return_obj = new JSONObject();
+		_return_obj.put("name", "localhost");
+		_return_obj.put("result", result);
+		return Response.status(200).entity(_return_obj.toString()).build();
 	}
 }
