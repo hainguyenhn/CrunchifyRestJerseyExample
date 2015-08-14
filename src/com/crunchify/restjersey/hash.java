@@ -32,7 +32,6 @@ public class hash {
 		return result;
 	}
 
-
 	public static String _hash(String target){
 		/*
 		 * This method hashes a string using md5
@@ -69,14 +68,12 @@ public class hash {
 		 */
 		String s = base;
 		int num_i = length;
-		String _hash = "";
 		boolean found = false;
 		int j = from;
 		while(!found && j <= to){
 			String a = s + j;
 			if(verify_hash(num_i, a)){
 				found = true;
-				System.out.println("found");
 			}
 			else{
 				j++;
