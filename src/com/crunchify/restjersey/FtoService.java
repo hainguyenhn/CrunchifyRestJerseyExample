@@ -47,7 +47,6 @@ public class FtoService {
 	  
 	  @Path("/add_one/{f}")
 	  @GET
-	  @Produces("application/json")
 	  public Response add_one(@PathParam("f") int f) throws JSONException {
  
 		JSONObject jsonObject = new JSONObject();
