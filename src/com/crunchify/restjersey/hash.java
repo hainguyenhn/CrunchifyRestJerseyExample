@@ -1,8 +1,5 @@
 package com.crunchify.restjersey;
-import java.io.*;
-import org.json.JSONObject;
 import java.security.*;
-import java.math.*;
 
 public class hash {
 	public static String get_string(int length){
