@@ -2,6 +2,7 @@ package com.crunchify.client;
 import com.crunchify.restjersey.hash;
 import com.sun.jersey.api.client.Client;
 
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -23,11 +24,16 @@ public class CrunchifyRESTJerseyClient {
 		CrunchifyRESTJerseyClient crunchifyClient = new CrunchifyRESTJerseyClient();
 		crunchifyClient.post();
 	}
+	
 
 	private void post() {
 		/*
 		 * This methods divides the work and send to multiple workers
 		 */
+		
+		// call to update worker first 
+		
+		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("from", 0);
 		jsonObject.put("to", 9999);
@@ -67,7 +73,26 @@ public class CrunchifyRESTJerseyClient {
 			}
 		}
 	}
-
+	
+	
+	private int process(){
+		return 0;
+	}
+	
+	private void get_worker(){
+		
+	}
+	
+	private ArrayList<JSONObject> divide_work(JSONObject work){
+		int from = work.getInt("from");
+		int to = work.getInt("to");
+		int num_i = work.getInt("num_i");
+		String base = work.getString("base_string");
+		
+		
+		return null;
+		
+	}
 
 	class leader implements Callable<Integer> {
 		private String ip;
