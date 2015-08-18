@@ -2,6 +2,7 @@ package com.crunchify.client;
 import com.crunchify.restjersey.hash;
 import com.sun.jersey.api.client.Client;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -26,12 +27,22 @@ public class CrunchifyRESTJerseyClient {
 	}
 	
 
-	private void post() {
+	private void post(ArrayList<JSONObject> list_worker) {
 		/*
 		 * This methods divides the work and send to multiple workers
 		 */
 		
 		// call to update worker first 
+		int num_worker = list_worker.size();
+		
+		//create a list of worker
+		leader [] workers = new leader[num_worker];
+		//create a list of future result
+		ArrayList<FutureTask<Integer>> results = new ArrayList<FutureTask<Integer>>();
+		for(int i = 0; i < num_worker; i++){
+			workers[i] = new leader("8000", list_worker.get(i));
+			results.add(new FutureTask<Integer>(workers[i]));
+		}
 		
 		
 		JSONObject jsonObject = new JSONObject();
