@@ -23,5 +23,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/hai/Downloads/json-simple-1.1.jar.zip"/>
+	<classpathentry kind="lib" path="C:/Users/hai/zookeeper-leader-election/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="C:/Users/hai/zookeeper-leader-election/zookeeper-3.3.4.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
