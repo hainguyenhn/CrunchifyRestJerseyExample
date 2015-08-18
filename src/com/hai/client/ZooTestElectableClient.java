@@ -10,16 +10,15 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.zookeeper.KeeperException;
-
 import com.hai.zk.ZooElectableClient;
-
-import Server;
-import leader_worker;
+import com.hai.client.leader;
+import com.hai.client.worker;
 
 // See http://zookeeper.apache.org/doc/trunk/recipes.html#sc_leaderElection
 public class ZooTestElectableClient extends ZooElectableClient {
 
-	String name = "";
+	String worker_server_path = "";
+	String leader_server_path = "";
 	boolean isFirstRun = true;
 	boolean wasLeader = false;
 	leader_worker worker; 
@@ -46,45 +45,22 @@ public class ZooTestElectableClient extends ZooElectableClient {
 		Server sv = null;
 
 		if(leader){
-			if(worker != null){
-				worker.interrupt();
-			}
+			// launch leader listening server
 
-			/*
-			 * wait for worker to join
-			 */
-			int num_workers = get_woker_ip().size();
-			while(num_workers < 2){
-				System.out.println("Leader " + this.name + " is waiting for worker to join");
-				num_workers = get_woker_ip().size();
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-			worker = new leader_worker(true, this.name);
-			ArrayList<String> list_worker = (ArrayList<String>) get_woker_ip();
-			worker.update_workers(list_worker);
-			t = new Thread(worker);
-			t.setDaemon(true);
-			t.start();
-
+			//if there is a request, send to worker
+			
+			
+			
+			//print result?
 			System.out.println("leader");
 			List<String> ip = get_woker_ip();
 
 		}
 		else{
-			if(worker != null){
-				worker.interrupt();
-			}
-			worker = new leader_worker(false, this.name);
-			t = new Thread(worker);
-			t.setDaemon(true);
-			t.start();
-			System.out.println("worker");
+			///launch worker server and listening for jobs
+
+			worker _worker = new worker(worker_server_path);
+			_worker.run();
 			List<String> ip = get_woker_ip();
 		}	
 	}

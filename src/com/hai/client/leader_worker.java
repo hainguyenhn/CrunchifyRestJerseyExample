@@ -14,14 +14,14 @@ public class leader_worker extends Thread
 	private Socket client;
 	boolean leader = false;
 	String name;
-	String server_path = "";
+	String worker_server_path = "";
 	final int port = 9090;
 	ArrayList<String> workers;
 
 	public leader_worker(boolean leader, String name, String path) 
 	{
 		this.name = name;
-		this.server_path = path;
+		this.worker_server_path = path;
 		this.leader = leader;
 		this.workers = new ArrayList<String>();
 		System.out.print(this.leader);
@@ -52,18 +52,18 @@ public class leader_worker extends Thread
 
 	public void run(){
 		if(this.leader){
-			leader_run(this.name);
+			leader_run();
 		}
 		else{
-			worker_run(this.server_path);
+			worker_run();
 		}
 	}
 
-	public void worker_run(String path)
+	public void worker_run()
 	{
 		Runtime runtime = Runtime.getRuntime();
 		try {
-			Process p1 = runtime.exec("cmd /c start " + path + "//catalina.bat run ", null, new File(path));
+			Process p1 = runtime.exec("cmd /c start " + worker_server_path + "//catalina.bat run ", null, new File(worker_server_path));
 			InputStream is = p1.getInputStream();
 			int i = 0;
 			while( (i = is.read() ) != -1) {
@@ -72,12 +72,9 @@ public class leader_worker extends Thread
 		} catch(IOException ioException) {
 			System.out.println(ioException.getMessage() );
 		}
-
 	}
 
-
-
-	public void leader_run(String name){
+	public void leader_run(){
 		ArrayList<vm> list_worker = new ArrayList<vm>();
 	}
 

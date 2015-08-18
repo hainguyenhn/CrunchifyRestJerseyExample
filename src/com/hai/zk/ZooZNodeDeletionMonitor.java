@@ -41,6 +41,8 @@ public class ZooZNodeDeletionMonitor implements Watcher, StatCallback {
          * The ZooKeeper session is no longer valid.
          */
         void onZooKeeperSessionClosed();
+
+		void performRole();
     }
 
 	/**
