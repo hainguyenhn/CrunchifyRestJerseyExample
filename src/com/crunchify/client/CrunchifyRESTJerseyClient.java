@@ -1,4 +1,5 @@
 package com.crunchify.client;
+import com.crunchify.vm;
 import com.crunchify.restjersey.hash;
 import com.sun.jersey.api.client.Client;
 
@@ -20,14 +21,29 @@ import com.sun.jersey.api.client.WebResource;
  */
 
 public class CrunchifyRESTJerseyClient {
+	ArrayList<vm> list_worker;
+	
+	public CrunchifyRESTJerseyClient(ArrayList<vm> list_vm){
+		list_worker = list_vm;
+	}
 
 	public static void main(String[] args) {
-		CrunchifyRESTJerseyClient crunchifyClient = new CrunchifyRESTJerseyClient();
+		JSONObject work =new JSONObject();
+		work.put("from", 0);
+		work.put("to", 2147483647);
+		work.put("num_i", 10);
+		work.put("base_string", "This 21is a test");
+		
+		ArrayList<vm> list_worker = new ArrayList<vm>();
+		list_worker.add(new vm("vm1", "localhost:8080"));
+		list_worker.add(new vm("vm1", "localhost:8085"));
+		CrunchifyRESTJerseyClient crunchifyClient = new CrunchifyRESTJerseyClient(list_worker);
+		crunchifyClient.divide_work(work);
 		crunchifyClient.post();
 	}
 	
 
-	private void post(ArrayList<JSONObject> list_worker) {
+	private void post() {
 		/*
 		 * This methods divides the work and send to multiple workers
 		 */
@@ -39,12 +55,16 @@ public class CrunchifyRESTJerseyClient {
 		leader [] workers = new leader[num_worker];
 		//create a list of future result
 		ArrayList<FutureTask<Integer>> results = new ArrayList<FutureTask<Integer>>();
+		ExecutorService executor = Executors.newFixedThreadPool(num_worker);
+		
+		
 		for(int i = 0; i < num_worker; i++){
-			workers[i] = new leader("8000", list_worker.get(i));
+			workers[i] = new leader(list_worker.get(i).getString("ip"), list_worker.get(i));
 			results.add(new FutureTask<Integer>(workers[i]));
+			executor.execute(results.get(i));
 		}
 		
-		
+		/*
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("from", 0);
 		jsonObject.put("to", 9999);
@@ -65,20 +85,23 @@ public class CrunchifyRESTJerseyClient {
 		ExecutorService executor = Executors.newFixedThreadPool(2);
 		executor.execute(rs);
 		executor.execute(rs_1);
-		while (true) {
+		*/
+		boolean found = false;
+		while (!found) {
 			try {
-				if (rs.isDone() && rs_1.isDone()) {
-					System.out.println("1 " + rs.get());
-					System.out.println("2 " + rs_1.get());
-					System.out.println("Done");
-					// Initiates an orderly shutdown in which previously
-					// submitted tasks are executed, but no new tasks will be
-					// accepted. Invocation has no additional effect if already
-					// shut down.
-					executor.shutdown();
-					return;
+				
+				for(int i = 0; i < num_worker; i++){
+					if (results.get(i).isDone() && results.get(i).get() != -1){
+						System.out.println("Found " + results.get(i).get());
+						System.out.println("worker who found the result is " + list_worker.get(i).getString("ip"));
+						executor.shutdown();
+						found = true;
+						break;
+					}
+					if(results.get(i).isDone()){
+						System.out.println("worker did not found the result: " + list_worker.get(i).getString("ip"));
+					}
 				}
-
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
@@ -94,15 +117,22 @@ public class CrunchifyRESTJerseyClient {
 		
 	}
 	
-	private ArrayList<JSONObject> divide_work(JSONObject work){
+	private void divide_work(JSONObject work){
+		System.out.println(work);
 		int from = work.getInt("from");
 		int to = work.getInt("to");
 		int num_i = work.getInt("num_i");
 		String base = work.getString("base_string");
 		
-		
-		return null;
-		
+		int available_workers = this.list_worker.size();
+		int range = (int)(to - from)/available_workers;
+
+		for(int i = 0; i < available_workers; i++){
+			this.list_worker.get(i).put("from", (range * i) + i);
+			this.list_worker.get(i).put("to", (range * i) + range + i);
+			this.list_worker.get(i).put("num_i", num_i);
+			this.list_worker.get(i).put("base_string", base);
+		}	
 	}
 
 	class leader implements Callable<Integer> {
@@ -120,6 +150,7 @@ public class CrunchifyRESTJerseyClient {
 			try {
 				Client client = Client.create();
 				WebResource webResource = client.resource("http://" + ip + "/CrunchifyRESTJerseyExample/my_app/process/hash");
+				System.out.println(j_obj.toString() + ip);
 				ClientResponse response = webResource.type("application/json")
 						.post(ClientResponse.class, j_obj.toString());
 
