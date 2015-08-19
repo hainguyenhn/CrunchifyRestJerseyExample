@@ -5,7 +5,6 @@ package com.hai.client;
  */
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -24,9 +23,8 @@ public class ZooTestElectableClient extends ZooElectableClient {
 	leader_worker worker; 
 	Thread t;
 
-	public ZooTestElectableClient(String name) throws KeeperException, IOException, InterruptedException {
-		super(name);
-		this.name = name;
+	public ZooTestElectableClient(String ip) throws KeeperException, IOException, InterruptedException {
+		super(ip);
 	}
 
 	// Override this function to determine what work should be done
@@ -42,26 +40,28 @@ public class ZooTestElectableClient extends ZooElectableClient {
 		 */
 		boolean leader;
 		leader = getCachedIsLeader();
-		Server sv = null;
 
 		if(leader){
-			// launch leader listening server
-
-			//if there is a request, send to worker
-			
-			
-			
-			//print result?
-			System.out.println("leader");
-			List<String> ip = get_woker_ip();
+			leader _leader = null;
+			try {
+				_leader = new leader("");
+			} catch (KeeperException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			_leader.serve(leader_server_path);
 
 		}
 		else{
 			///launch worker server and listening for jobs
-
 			worker _worker = new worker(worker_server_path);
 			_worker.run();
-			List<String> ip = get_woker_ip();
 		}	
 	}
 
@@ -83,10 +83,9 @@ public class ZooTestElectableClient extends ZooElectableClient {
 	public static void main(String args[])
 			throws KeeperException, IOException, InterruptedException {
 
-		String name = get_name();
-		ZooElectableClient zooClient = new ZooTestElectableClient(name);
+		InetAddress ip = InetAddress.getLocalHost();
+		ZooElectableClient zooClient = new ZooTestElectableClient(ip.getHostAddress());
 		zooClient.run();
 		System.out.println( "ZooTestElectableClient::main:: client finished." );
-
 	}
 }
