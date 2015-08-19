@@ -4,8 +4,12 @@
  */
 package com.hai.client;
 import com.hai.vm;
+import com.hai.zk.ZooElectableClient;
 import com.sun.jersey.api.client.Client;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -13,22 +17,43 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import org.apache.zookeeper.KeeperException;
 import org.json.JSONObject;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-public class leader {
+public class leader extends ZooElectableClient {
 	ArrayList<vm> list_worker;
 
-	public leader(ArrayList<String> list_vm){
-		for(int i = 0; i < list_vm.size(); i++){
-			list_worker.add(new vm("", list_vm.get(0)));
+	public leader(String name) throws KeeperException, IOException, InterruptedException{
+		super(name);
+
+	}
+	
+	public void serve(String leader_server_path){
+		Runtime runtime = Runtime.getRuntime();
+		try {
+			Process p1 = runtime.exec("cmd /c start " + leader_server_path + "//catalina.bat run ", null, new File(leader_server_path));
+			InputStream is = p1.getInputStream();
+			int i = 0;
+			while( (i = is.read() ) != -1) {
+				System.out.print((char)i);
+			}
+		} catch(IOException ioException) {
+			System.out.println(ioException.getMessage() );
 		}
 	}
 	
 	public int run(JSONObject work){
 		this.divide_work(work);
 		return this.post();
+	}
+	
+	public void update_worker(){
+		ArrayList<String> list_vm = (ArrayList<String>) this.get_woker_ip();
+		for(int i = 0; i < list_vm.size(); i++){
+			list_worker.add(new vm("", list_vm.get(0)));
+		}
 	}
 
 	private int post() {
@@ -149,5 +174,11 @@ public class leader {
 		_leader.divide_work(work);
 		_leader.post();
 		 */
+	}
+
+	@Override
+	public void performRole() {
+		// TODO Auto-generated method stub
+		
 	}
 }
